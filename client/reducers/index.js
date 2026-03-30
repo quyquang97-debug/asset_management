@@ -4,11 +4,13 @@ import {reducer as formReducer} from 'redux-form';
 
 // Import custom components
 import authReducer from './authReducer';
+import repairRequestReducer from './repairRequestReducer';
 
 const appReducer = (history) => combineReducers({
     router: connectRouter(history),
     form: formReducer,  // ← redux-form
     auth: authReducer,
+    repairRequest: repairRequestReducer,
 });
 
 const rootReducer = (state, action) => {

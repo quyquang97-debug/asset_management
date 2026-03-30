@@ -1,0 +1,72 @@
+{
+  "repairRequests": {
+    "title": "Repair Requests",
+    "addSuccess": "Created successfully.",
+    "updateSuccess": "Updated successfully.",
+    "updateStatusSuccess": "Status updated successfully.",
+    "deleteConfirm": "Delete ({{count}} items). Are you sure?",
+    "deleteNoSelection": "Please select the items to delete.",
+    "notFound": "Repair request does not exist.",
+    "errorGeneral": "An error occurred. Please try again.",
+    "common": {
+      "id": "ID",
+      "search": "Search",
+      "clear": "Clear",
+      "add": "Add",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "update": "Update",
+      "of": "of",
+      "ok": "OK"
+    },
+    "table": {
+      "id": "ID",
+      "assetCode": "Asset Code",
+      "assetName": "Asset Name",
+      "requestedBy": "Requested by",
+      "requestDate": "Request date",
+      "status": "Status",
+      "action": "Action"
+    },
+    "modal": {
+      "addTitle": "Add Repair Request",
+      "editTitle": "Edit Repair Request",
+      "viewTitle": "View Repair Request",
+      "updateStatusTitle": "Update Status",
+      "assetCodeLabel": "Asset Code *",
+      "requestedByLabel": "Requested by *",
+      "descriptionLabel": "Description",
+      "requestDateLabel": "Request date *",
+      "repairDateLabel": "Repair date *",
+      "costLabel": "Cost",
+      "performedByLabel": "Performed by",
+      "statusLabel": "Status *"
+    },
+    "dialog": {
+      "confirmTitle": "Confirm Delete",
+      "noticeTitle": "Notice"
+    },
+    "validation": {
+      "assetCodeRequired": "Asset Code is required",
+      "requestedByRequired": "Requested by is required",
+      "requestDateRequired": "Request date is required",
+      "requestDateFuture": "Cannot be a future date",
+      "repairDateRequired": "Repair date is required",
+      "repairDateBeforeRequest": "Repair date must be after Request date",
+      "costRequired": "Cost is required",
+      "costNegative": "Cost cannot be negative",
+      "performedByRequired": "Performed by is required",
+      "invalidSelection": "Invalid selection",
+      "statusRequired": "Status is required"
+    },
+    "status": {
+      "open": "Open",
+      "in_progress": "In Progress",
+      "done": "Done",
+      "cancelled": "Cancelled",
+      "all": "All"
+    }
+  }
+}

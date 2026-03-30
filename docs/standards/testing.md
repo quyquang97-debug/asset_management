@@ -1,8 +1,8 @@
 # Testing Standards
 
-> Status: **Aspirational** — no test suite exists in this repo (2026-03-28).
-> `.eslintrc` declares `"jasmine": true` env but no spec files found.
-> These standards define the target state for when tests are introduced.
+> Status: **Partial** — Jest 26 + babel-jest 26 configured (2026-03-29). 26 tests / 5 suites for the REPAIRREQUESTS module pass.
+> One IT placeholder (`repairRequest.status.transaction.test.js`) is vacuous — deferred until a `NODE_ENV=test` DB harness exists.
+> Core CRUD layers (crudReducer, user.controller, authenticate) remain untested.
 
 ---
 
@@ -51,6 +51,14 @@ Pattern: `describe(<unit>)` → `describe(<method>)` → `it(<expected behavior>
 
 ## Unit Test Targets (Priority Order)
 
+Already written (REPAIRREQUESTS module):
+- `client/reducers/__tests__/repairRequestReducer.test.js` — 7 tests
+- `client/components/repairRequests/__tests__/RepairRequestAddModal.validate.test.js` — 6 tests
+- `client/components/repairRequests/__tests__/UpdateStatusModal.validate.test.js` — 11 tests
+- `client/components/repairRequests/__tests__/RepairRequestEditModal.validate.test.js` — 1 test
+- `server/routes/__tests__/repairRequest.status.transaction.test.js` — placeholder (vacuous)
+
+Still to write (core CRUD layers, highest ROI):
 1. `client/reducers/crudReducer.js` — pure function, easy to test
 2. `client/actions/commonAction.js` — pure action creators
 3. `client/utils/commonUtil.js` — pure utility functions

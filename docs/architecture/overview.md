@@ -67,13 +67,16 @@ Rule: **dependencies flow downward only**. No circular imports. Models do not im
 |------|------|
 | `server/config/express.js` | App instance, middleware registration |
 | `server/app.js` | Entry: webpack HMR + swagger + routes + error handlers |
-| `server/routes/index.route.js` | Mount `/auth` and `/users` sub-routers |
+| `server/routes/index.route.js` | Mount `/auth`, `/users`, `/assets`, `/employees`, `/repairRequests` sub-routers |
 | `server/middlewares/authenticate.js` | JWT verify → `req.currentUser` |
 | `server/middlewares/errorHandler.js` | Generic 500, 404, 405 JSON responses |
 | `server/middlewares/joiErrorHandler.js` | Joi validation error → 400 response |
 | `server/config/joi.validate.js` | Joi middleware factory |
 | `server/utils/validator.js` | Joi schema definitions |
 | `server/config/winston.js` | Logger: console + daily-rotate-file |
+| `server/routes/{asset,employee,repairRequest}.route.js` | Domain routes added by REPAIRREQUESTS module |
+| `server/controllers/{asset,employee,repairRequest}.controller.js` | Domain controllers added by REPAIRREQUESTS module |
+| `server/models/{asset,employee,repairRequest,assetMaintenance}.model.js` | Bookshelf models added by REPAIRREQUESTS module |
 
 ### Frontend
 
@@ -84,9 +87,13 @@ Rule: **dependencies flow downward only**. No circular imports. Models do not im
 | `client/actions/crudAction.js` | Generic CRUD thunks (entity-based) |
 | `client/actions/commonAction.js` | Action creators for all entity action types |
 | `client/services/httpService.js` | Entity-name-based API path construction |
-| `client/utils/httpUtil.js` | Axios instance wrapper (fetch/store/update/destroy) |
+| `client/utils/httpUtil.js` | Axios instance wrapper (fetch/store/update/destroy/patch/destroyWithBody) |
 | `client/reducers/crudReducer.js` | Generic entity state reducer |
 | `client/reducers/authReducer.js` | Auth state (token, user) |
+| `client/actions/repairRequestAction.js` | Dedicated action + action-type constants for REPAIRREQUESTS module |
+| `client/reducers/repairRequestReducer.js` | Dedicated reducer for REPAIRREQUESTS module |
+| `client/services/repairRequestService.js` | Dedicated service for REPAIRREQUESTS module |
+| `client/i18n/` | i18next locale files (vi / en / ja) |
 
 ---
 
@@ -109,7 +116,7 @@ Rule: **dependencies flow downward only**. No circular imports. Models do not im
 | HTTP client | axios (via httpUtil) | 0.21.1 |
 | Build | Webpack 4 + Babel | — |
 | CI | **None configured** | — |
-| Test suite | **None configured** | — |
+| Test suite | Jest 26 + babel-jest 26 | Partial — REPAIRREQUESTS module only (26 tests / 5 suites) |
 
 ---
 
@@ -119,7 +126,7 @@ Rule: **dependencies flow downward only**. No circular imports. Models do not im
 |------|--------|
 | Express 5 alpha | Pre-release; async error handling differs from Express 4 |
 | No CI pipeline | `.github/` does not exist; no Jenkinsfile |
-| No test suite | No test files found; `.eslintrc` references `jasmine` env but no specs exist |
+| Partial test suite | 26 tests / 5 suites for REPAIRREQUESTS module; core CRUD layers (crudReducer, user.controller, authenticate) still untested |
 | CORS open | `app.use(cors())` — no origin whitelist in `server/config/express.js` |
 | JWT no expiry | `jwt.sign()` in `auth.controller.js` has no `expiresIn` option |
 | Token in localStorage | Implied by `jwtUtil` — XSS risk; acceptable trade-off for SPA |

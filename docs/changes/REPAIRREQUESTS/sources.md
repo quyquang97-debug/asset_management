@@ -1,6 +1,6 @@
 # Source of Truth — REPAIRREQUESTS
 
-> Created: 2026-03-28 | Updated: 2026-03-28 (v3 — S-6, S-7 added; C-008 new)
+> Created: 2026-03-28 | Updated: 2026-03-29 (v4 — S-1, S-3 updated; PATCH body updated_by added)
 
 ---
 
@@ -8,9 +8,9 @@
 
 | ID | File | Type | Authority Level |
 |----|------|------|----------------|
-| S-1 | `raw/spec_business.md` | Business + API specification | **Primary** — event/interaction/validation/API logic |
+| S-1 | `raw/spec_business.md` | Business + API specification | **Primary** — event/interaction/validation/API logic _(updated 2026-03-29: PATCH body now includes `updated_by`)_ |
 | S-2 | `raw/spec_ui.md` | UI wireframe + layout (list screen) | **Primary** — screen layout, columns, colors, UX behavior |
-| S-3 | `raw/qlts_database_schema.md` | DB schema + SQL DDL | **Authoritative** — column names, types, ENUM values, FK constraints |
+| S-3 | `raw/qlts_database_schema.md` | DB schema + SQL DDL | **Authoritative** — column names, types, ENUM values, FK constraints _(updated 2026-03-29: no spec-impacting changes for REPAIRREQUESTS)_ |
 | S-4 | `raw/spec_ui_modal_add_request.md` | UI wireframe — Add Repair Request modal | **Primary** — Add form fields, order, validation messages |
 | S-5 | `raw/spec_ui_modal_UpdateStatus.md` | UI wireframe — Update Status modal | **Primary** — Update Status form fields, layout |
 | S-6 | `raw/addrequest_business.md` | Business events — Add/Edit modal | **Primary** — Add/Edit modal initialization, save/error feedback, close behavior |
@@ -117,16 +117,15 @@ Allowed transitions in Update Status popup:
 
 ---
 
-### C-008: Description required vs optional when status=done ⚠️ NEEDS RESOLUTION
+### C-008: Description required vs optional when status=done ✅ RESOLVED (2026-03-29)
 
 | Source | Description |
 |--------|-------------|
-| `spec_business.md` §B.2 (S-1) | Required when done: `Repair date`, `Cost`, `Performed by` — Description NOT listed |
+| `spec_business.md` §B.2 (S-1) | Required when done: `Repair date` only — Description NOT listed _(updated 2026-03-29)_ |
 | `spec_ui_modal_UpdateStatus.md` (S-5) | Description field shown without `(*)` asterisk |
-| `updateStatus_business.md` (S-7) | "Kích hoạt (Enable) và **đánh dấu bắt buộc (*)**": Repair date, **Description**, Cost, Performed by |
+| `updateStatus_business.md` (S-7) | Required `(*)`: `Repair date` only — Description NOT listed _(updated 2026-03-29)_ |
 
-**Conflict:** S-7 marks Description as required when done; S-1 and S-5 treat it as optional.
-**Interim decision:** Keep Description as **optional** (following S-1 and S-5 wireframe) pending stakeholder confirmation.
+**Resolution:** All three sources now agree — Description is **optional** when status=done. S-7 was corrected by the author to remove Description from the required list.
 
 ---
 

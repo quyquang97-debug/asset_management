@@ -9,7 +9,7 @@ export const httpBase = () => {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-XSRF-TOKEN': getLocalStorage(JWT_TOKEN)
+            'Authorization': 'Bearer ' + getLocalStorage(JWT_TOKEN)
         },
         responseType: 'json'
     });
@@ -17,18 +17,18 @@ export const httpBase = () => {
     api.interceptors.response.use((response) => {
         return response;
     }, error => {
-
-        if (401 === error.response.status) {
-            // redirect to login page
-        }
-        if (404 === error.response.status) {
-            // redirect to 404 page
-        }
-        if (500 === error.response.status) {
-            // redirect to 500 page
+        if (error.response) {
+            if (401 === error.response.status) {
+                // redirect to login page
+            }
+            if (404 === error.response.status) {
+                // redirect to 404 page
+            }
+            if (500 === error.response.status) {
+                // redirect to 500 page
+            }
         }
         return Promise.reject(error);
-
     });
 
     return api;

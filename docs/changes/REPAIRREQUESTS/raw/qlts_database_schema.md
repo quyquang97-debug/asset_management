@@ -60,7 +60,9 @@ asset_types
 | room | VARCHAR | | | | Phòng |
 | status | ENUM | | | | `USE`, `NOT_USE` |
 | created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
 | updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
@@ -72,6 +74,10 @@ asset_types
 | id | INT AUTO_INCREMENT | ✓ | | | Khóa chính |
 | code | VARCHAR(50) | | ✓ | ✓ | VD: LAP, AIR, TAB… |
 | name | VARCHAR(200) | | ✓ | | Tên loại tài sản |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
@@ -82,6 +88,10 @@ asset_types
 |--------|------|----|----------|--------|-------------|
 | id | INT AUTO_INCREMENT | ✓ | | | Khóa chính |
 | name | VARCHAR(100) | | ✓ | | Tên phòng ban |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
@@ -102,8 +112,10 @@ asset_types
 | location_id | INT | FK | ✓ | | Tầng 1, 2, 3 |
 | warranty_expiry | DATE | | | | Hạn bảo hành |
 | supplier | VARCHAR(255) | | | | Nhà cung cấp |
-| created_at | DATETIME | | ✓ | | Ngày tạo |
-| updated_at | DATETIME | | ✓ | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 **Giá trị ENUM `status`:**
 
@@ -140,8 +152,10 @@ asset_types
 | probation_date | DATE | | ✓ | | Ngày thử việc |
 | official_date | DATE | | | | Ngày chính thức |
 | address | VARCHAR(255) | | | | Địa chỉ |
-| created_at | DATETIME | | | | Ngày tạo |
-| updated_at | DATETIME | | | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
@@ -158,8 +172,10 @@ asset_types
 | assigned_date | DATE | | ✓ | | Ngày bàn giao |
 | returned_date | DATE | | | | Ngày trả tài sản (`NULL` = đang sử dụng, `!= NULL` = thu hồi) |
 | note | TEXT | | | | Ghi chú |
-| created_at | DATETIME | | ✓ | | Ngày tạo |
-| updated_at | DATETIME | | ✓ | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
@@ -174,8 +190,10 @@ asset_types
 | description | TEXT | | | | Mô tả lỗi |
 | request_date | DATE | | ✓ | | Ngày tạo yêu cầu |
 | status | ENUM | | ✓ | | `open`, `in_progress`, `done`, `cancelled` |
-| created_at | DATETIME | | ✓ | | Ngày tạo |
-| updated_at | DATETIME | | ✓ | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 **Luồng trạng thái:**
 
@@ -206,8 +224,10 @@ open → in_progress → done
 | name | VARCHAR(100) | | ✓ | | Tên kế hoạch |
 | frequency_days | INT | | ✓ | | Chu kỳ bảo trì (30 ngày…) |
 | description | TEXT | | | | Mô tả |
-| created_at | DATETIME | | ✓ | | Ngày tạo |
-| updated_at | DATETIME | | ✓ | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
@@ -221,8 +241,10 @@ open → in_progress → done
 | plan_id | INT | FK | | | Kế hoạch bảo trì (`NULL` = bất thường, `<> NULL` = tự động từ plan) |
 | scheduled_date | DATE | | ✓ | | Ngày dự kiến |
 | status | ENUM | | | | `open`, `in_progress`, `done`, `cancelled` |
-| created_at | DATETIME | | ✓ | | Ngày tạo |
-| updated_at | DATETIME | | ✓ | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 **Luồng trạng thái:**
 
@@ -259,8 +281,10 @@ open → in_progress → done
 | description | TEXT | | | | Chi tiết công việc |
 | cost | DECIMAL(12,2) | | | | Chi phí |
 | performed_by | VARCHAR(100) | | | | Người thực hiện |
-| created_at | DATETIME | | ✓ | | Ngày tạo |
-| updated_at | DATETIME | | ✓ | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
@@ -275,8 +299,10 @@ open → in_progress → done
 | disposal_price | DECIMAL(12,2) | | ✓ | | Giá thanh lý |
 | received_by | VARCHAR(100) | | | | Người nhận tiền |
 | note | TEXT | | | | Ghi chú |
-| created_at | DATETIME | | ✓ | | Ngày tạo |
-| updated_at | DATETIME | | ✓ | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
@@ -289,8 +315,10 @@ open → in_progress → done
 | audit_date | DATE | | ✓ | | Ngày kiểm kê |
 | created_by | INT | FK | ✓ | | User tạo |
 | status | ENUM | | ✓ | | Trạng thái kiểm kê |
-| created_at | DATETIME | | ✓ | | Ngày tạo |
-| updated_at | DATETIME | | ✓ | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
@@ -304,13 +332,14 @@ open → in_progress → done
 | asset_id | INT | FK | ✓ | | Tài sản |
 | scanned_at | TIMESTAMP | | | | Thời gian quét |
 | result | ENUM | | ✓ | | Kết quả kiểm kê |
-| created_at | DATETIME | | ✓ | | Ngày tạo |
-| updated_at | DATETIME | | ✓ | | Ngày cập nhật |
+| created_at | DATETIME | | ✓ | | Thời gian tạo |
+| created_by | INT | |  | | Tạo bởi user |
+| updated_at | DATETIME | | ✓ | | Thời gian cập nhật |
+| updated_by | INT | |  | | Cập nhật bởi user|
 
 ---
 
 ## SQL Tạo Bảng
-
 ```sql
 CREATE DATABASE asset_management;
 USE asset_management;
@@ -318,7 +347,12 @@ USE asset_management;
 CREATE TABLE asset_types (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(20) UNIQUE,
-    name VARCHAR(100)
+    name VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT   
 );
 
 CREATE TABLE locations (
@@ -329,8 +363,10 @@ CREATE TABLE locations (
     room VARCHAR(100) COMMENT 'phòng',
     status ENUM('USE', 'NOT_USE') DEFAULT 'USE' COMMENT 'USE, NOT USE',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật'
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT   
 );
 
 CREATE TABLE assets (
@@ -355,9 +391,11 @@ CREATE TABLE assets (
     location_id INT NOT NULL COMMENT 'FK tới bảng locations',
     warranty_expiry DATE,
     supplier VARCHAR(255),
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'ngày tạo',
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP COMMENT 'ngày cập nhật',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT,   
     CONSTRAINT fk_asset_location
         FOREIGN KEY (location_id) REFERENCES locations(id),
     CONSTRAINT fk_asset_type
@@ -366,7 +404,12 @@ CREATE TABLE assets (
 
 CREATE TABLE departments (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100)
+    name VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT   
 );
 
 CREATE TABLE employees (
@@ -385,6 +428,11 @@ CREATE TABLE employees (
     probation_date DATE,
     official_date DATE,
     address VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT,   
     FOREIGN KEY (department_id) REFERENCES departments(id),
     FOREIGN KEY (manager_id) REFERENCES employees(id)
 );
@@ -396,8 +444,11 @@ CREATE TABLE asset_assignments (
     assigned_date DATE,
     returned_date DATE,
     note TEXT,
-    created_at DATETIME,
-    updated_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT,   
     FOREIGN KEY (asset_id) REFERENCES assets(id),
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
@@ -409,8 +460,11 @@ CREATE TABLE repair_requests (
     description TEXT,
     request_date DATE,
     status ENUM('open','in_progress','done','cancelled'),
-    created_at DATETIME,
-    updated_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT,  
     FOREIGN KEY (asset_id) REFERENCES assets(id),
     FOREIGN KEY (requested_by) REFERENCES employees(id)
 );
@@ -421,8 +475,11 @@ CREATE TABLE maintenance_plans (
     name VARCHAR(255),
     frequency_days INT,
     description TEXT,
-    created_at DATETIME,
-    updated_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT,   
     FOREIGN KEY (asset_type_id) REFERENCES asset_types(id)
 );
 
@@ -432,8 +489,11 @@ CREATE TABLE maintenance_requests (
     plan_id INT,
     scheduled_date DATE,
     status ENUM('open','in_progress','done','cancelled'),
-    created_at DATETIME,
-    updated_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT,   
     FOREIGN KEY (asset_id) REFERENCES assets(id),
     FOREIGN KEY (plan_id) REFERENCES maintenance_plans(id)
 );
@@ -448,8 +508,11 @@ CREATE TABLE asset_maintenances (
     description TEXT,
     cost DECIMAL(12,2),
     performed_by VARCHAR(100),
-    created_at DATETIME,
-    updated_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT,   
     FOREIGN KEY (asset_id) REFERENCES assets(id),
     FOREIGN KEY (repair_request_id) REFERENCES repair_requests(id),
     FOREIGN KEY (maintenance_request_id) REFERENCES maintenance_requests(id)
@@ -462,18 +525,23 @@ CREATE TABLE asset_disposals (
     disposal_price DECIMAL(12,2),
     received_by VARCHAR(100),
     note TEXT,
-    created_at DATETIME,
-    updated_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT,
     FOREIGN KEY (asset_id) REFERENCES assets(id)
 );
 
 CREATE TABLE asset_audits (
     id INT AUTO_INCREMENT PRIMARY KEY,
     audit_date DATE,
-    created_by INT,
     status VARCHAR(50),
-    created_at DATETIME,
-    updated_at DATETIME
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT   
 );
 
 CREATE TABLE audits_items (
@@ -482,8 +550,11 @@ CREATE TABLE audits_items (
     asset_id INT,
     scanned_at DATETIME,
     result VARCHAR(100),
-    created_at DATETIME,
-    updated_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'thời gian tạo',
+    created_by INT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'thời gian cập nhật' ,
+    updated_by INT,   
     FOREIGN KEY (audit_id) REFERENCES asset_audits(id),
     FOREIGN KEY (asset_id) REFERENCES assets(id)
 );

@@ -1,0 +1,72 @@
+{
+  "repairRequests": {
+    "title": "修理依頼",
+    "addSuccess": "正常に作成されました。",
+    "updateSuccess": "正常に更新されました。",
+    "updateStatusSuccess": "ステータスが正常に更新されました。",
+    "deleteConfirm": "削除 ({{count}} 件)。よろしいですか？",
+    "deleteNoSelection": "削除する項目を選択してください。",
+    "notFound": "修理依頼が存在しません。",
+    "errorGeneral": "エラーが発生しました。もう一度お試しください。",
+    "common": {
+      "id": "ID",
+      "search": "検索",
+      "clear": "クリア",
+      "add": "追加",
+      "delete": "削除",
+      "save": "保存",
+      "cancel": "キャンセル",
+      "close": "閉じる",
+      "update": "更新",
+      "of": "/",
+      "ok": "OK"
+    },
+    "table": {
+      "id": "ID",
+      "assetCode": "資産コード",
+      "assetName": "資産名",
+      "requestedBy": "依頼者",
+      "requestDate": "依頼日",
+      "status": "ステータス",
+      "action": "操作"
+    },
+    "modal": {
+      "addTitle": "修理依頼の追加",
+      "editTitle": "修理依頼の編集",
+      "viewTitle": "修理依頼の表示",
+      "updateStatusTitle": "ステータス更新",
+      "assetCodeLabel": "資産コード *",
+      "requestedByLabel": "依頼者 *",
+      "descriptionLabel": "説明",
+      "requestDateLabel": "依頼日 *",
+      "repairDateLabel": "修理日 *",
+      "costLabel": "費用",
+      "performedByLabel": "実施者",
+      "statusLabel": "ステータス *"
+    },
+    "dialog": {
+      "confirmTitle": "削除確認",
+      "noticeTitle": "お知らせ"
+    },
+    "validation": {
+      "assetCodeRequired": "資産コードは必須です",
+      "requestedByRequired": "依頼者は必須です",
+      "requestDateRequired": "依頼日は必須です",
+      "requestDateFuture": "未来の日付は指定できません",
+      "repairDateRequired": "修理日は必須です",
+      "repairDateBeforeRequest": "修理日は依頼日以降でなければなりません",
+      "costRequired": "費用は必須です",
+      "costNegative": "費用はマイナスにできません",
+      "performedByRequired": "実施者は必須です",
+      "invalidSelection": "無効な選択です",
+      "statusRequired": "ステータスは必須です"
+    },
+    "status": {
+      "open": "オープン",
+      "in_progress": "処理中",
+      "done": "完了",
+      "cancelled": "キャンセル",
+      "all": "すべて"
+    }
+  }
+}

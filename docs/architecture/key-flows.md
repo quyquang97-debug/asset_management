@@ -109,6 +109,82 @@ Unknown route
 
 ## 6. App Startup Flow
 
+---
+
+## 7. Multi-table DB Transaction Flow (PATCH /status)
+
+> Added 2026-03-29 — first use: REPAIRREQUESTS module
+
+```
+[UpdateStatusModal] onSubmit
+  → dispatch(repairRequestAction.updateStatus(id, { status, repairDate, cost, performedBy, description }))
+    → repairRequestService.updateStatus(id, data)        [client/services/repairRequestService.js]
+      → PATCH /api/repairRequests/{id}/status  (Bearer JWT)
+        → isAuthenticated middleware
+        → validate(schema.updateRepairRequestStatus)      [server/utils/validator.js]
+        → repairRequestController.updateStatus()          [server/controllers/repairRequest.controller.js]
+          → fetch current record (get current status + asset_id)
+          → validate allowed transition server-side:
+              open → in_progress | cancelled  (only)
+              in_progress → done              (only)
+              done | cancelled → anything     (rejected 400)
+          → knex.transaction(trx => {
+              UPDATE repair_requests SET status, updated_by, updated_at WHERE id    [trx]
+              IF status = 'done':
+                INSERT asset_maintenances (asset_id, repair_request_id,
+                  type='repair', maintenance_date, description, cost, performed_by)  [trx]
+              IF status = 'in_progress':
+                UPDATE assets SET status = 'IN_REPAIR' WHERE id = asset_id          [trx]
+            })
+          → COMMIT (all or nothing)
+        ← { error: false, data: updatedRecord }
+    ← dispatch({ type: REPAIR_REQUEST_UPDATE_STATUS_SUCCESS })
+      → repairRequestReducer: refresh item in list
+[RepairRequestList] grid row updates status + row color
+```
+
+**Key rule:** Any INSERT/UPDATE failure inside the transaction triggers full ROLLBACK — no partial state.
+
+**Evidence:** `server/controllers/repairRequest.controller.js`
+
+---
+
+## 8. POST-based Paginated Search Flow
+
+> Added 2026-03-29 — first use: REPAIRREQUESTS module (differs from GET fetchAll pattern in §2)
+
+```
+[RepairRequestList] onSearch / onPageChange / onSortChange
+  → dispatch(repairRequestAction.search({ assetId, requestedBy, status,
+                                           page, pageSize, sortField, sortDir }))
+    → repairRequestService.search(payload)               [client/services/repairRequestService.js]
+      → POST /api/repairRequests/search  (Bearer JWT)
+        → isAuthenticated middleware
+        → validate(schema.searchRepairRequests)
+        → repairRequestController.search()
+          → Knex query:
+              SELECT rr.*, a.asset_code, a.name AS asset_name, e.full_name AS requested_by_name
+              FROM repair_requests rr
+              JOIN assets a ON rr.asset_id = a.id
+              JOIN employees e ON rr.requested_by = e.id
+              WHERE (assetId? AND requestedBy? AND status?)
+              ORDER BY {sortField} {sortDir}
+              LIMIT pageSize OFFSET (page-1)*pageSize
+          → COUNT(*) same WHERE (for total)
+        ← { error: false, data: { items: [...], total, page, pageSize } }
+    ← dispatch({ type: REPAIR_REQUEST_SEARCH_SUCCESS,
+                 payload: { items, total, page, pageSize } })
+      → repairRequestReducer updates: items, total, page, pageSize
+[RepairRequestList] re-renders table rows + pagination display
+```
+
+**Difference from §2 (GET fetchAll):** Uses POST with a body; returns paginated + total count;
+sort is server-side via `sortField`/`sortDir` params; default sort = `request_date DESC`.
+
+**Evidence:** `server/controllers/repairRequest.controller.js`
+
+---
+
 ```
 npm run build
   → rimraf dist

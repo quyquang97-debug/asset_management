@@ -1,0 +1,72 @@
+{
+  "repairRequests": {
+    "title": "Yêu cầu sửa chữa",
+    "addSuccess": "Thêm mới thành công.",
+    "updateSuccess": "Cập nhật thành công.",
+    "updateStatusSuccess": "Cập nhật trạng thái thành công.",
+    "deleteConfirm": "Xóa ({{count}} mục). Bạn có chắc không?",
+    "deleteNoSelection": "Vui lòng chọn mục cần xóa.",
+    "notFound": "Yêu cầu sửa chữa không tồn tại.",
+    "errorGeneral": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "common": {
+      "id": "ID",
+      "search": "Tìm kiếm",
+      "clear": "Xóa bộ lọc",
+      "add": "Thêm mới",
+      "delete": "Xóa",
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "close": "Đóng",
+      "update": "Cập nhật",
+      "of": "của",
+      "ok": "OK"
+    },
+    "table": {
+      "id": "ID",
+      "assetCode": "Mã tài sản",
+      "assetName": "Tên tài sản",
+      "requestedBy": "Người yêu cầu",
+      "requestDate": "Ngày yêu cầu",
+      "status": "Trạng thái",
+      "action": "Thao tác"
+    },
+    "modal": {
+      "addTitle": "Thêm yêu cầu sửa chữa",
+      "editTitle": "Sửa yêu cầu sửa chữa",
+      "viewTitle": "Xem yêu cầu sửa chữa",
+      "updateStatusTitle": "Cập nhật trạng thái",
+      "assetCodeLabel": "Mã tài sản *",
+      "requestedByLabel": "Người yêu cầu *",
+      "descriptionLabel": "Mô tả",
+      "requestDateLabel": "Ngày yêu cầu *",
+      "repairDateLabel": "Ngày sửa chữa *",
+      "costLabel": "Chi phí",
+      "performedByLabel": "Đơn vị thực hiện",
+      "statusLabel": "Trạng thái *"
+    },
+    "dialog": {
+      "confirmTitle": "Xác nhận xóa",
+      "noticeTitle": "Thông báo"
+    },
+    "validation": {
+      "assetCodeRequired": "Mã tài sản là bắt buộc",
+      "requestedByRequired": "Người yêu cầu là bắt buộc",
+      "requestDateRequired": "Ngày yêu cầu là bắt buộc",
+      "requestDateFuture": "Không thể là ngày trong tương lai",
+      "repairDateRequired": "Ngày sửa chữa là bắt buộc",
+      "repairDateBeforeRequest": "Ngày sửa chữa phải sau ngày yêu cầu",
+      "costRequired": "Chi phí là bắt buộc",
+      "costNegative": "Chi phí không được âm",
+      "performedByRequired": "Đơn vị thực hiện là bắt buộc",
+      "invalidSelection": "Giá trị không hợp lệ",
+      "statusRequired": "Trạng thái là bắt buộc"
+    },
+    "status": {
+      "open": "Mở",
+      "in_progress": "Đang xử lý",
+      "done": "Hoàn thành",
+      "cancelled": "Đã hủy",
+      "all": "Tất cả"
+    }
+  }
+}

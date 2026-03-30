@@ -19,3 +19,13 @@ export const destroy = (endpoint) => {
     return httpBase()
         .delete(endpoint);
 };
+
+export const patch = (endpoint, data) => {
+    return httpBase()
+        .patch(endpoint, data);
+};
+
+export const destroyWithBody = (endpoint, data) => {
+    return httpBase()
+        .delete(endpoint, { data });
+};

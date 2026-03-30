@@ -7,12 +7,14 @@ import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
+import { Link } from 'react-router-dom';
 import HomeIcon from '@material-ui/icons/Home';
 import PersonIcon from '@material-ui/icons/Person';
 import SettingsIcon from '@material-ui/icons/Settings';
 import HelpIcon from '@material-ui/icons/Help';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import LocalTaxiIcon from '@material-ui/icons/LocalTaxi';
+import BuildIcon from '@material-ui/icons/Build';
 
 const drawerWidth = 250;
 
@@ -105,6 +107,12 @@ const MiniDrawer = (props) => {
             <LocalTaxiIcon />
           </ListItemIcon>
           <ListItemText primary="Products" />
+        </ListItem>
+        <ListItem button component={Link} to="/repair-requests">
+          <ListItemIcon>
+            <BuildIcon />
+          </ListItemIcon>
+          <ListItemText primary="Repair Requests" />
         </ListItem>
         <ListItem button>
           <ListItemIcon>

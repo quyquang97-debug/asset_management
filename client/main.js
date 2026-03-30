@@ -5,6 +5,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { blueGrey } from '@material-ui/core/colors';
 
+import './i18n';
 import store, { history } from './store/configureStore';
 import { verifyToken } from './services/tokenService';
 import App from './containers/app/AppContainer';

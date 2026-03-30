@@ -8,8 +8,11 @@ Tài liệu này mô tả chi tiết các sự kiện tương tác (Events) và 
 * **OnStatusChange (Logic đặc biệt):**
     * **Trigger:** Thay đổi giá trị trong Dropdown "Status" bên trong Modal Update Status.
     * **Logic nghiệp vụ:**
-        * **Nếu Status = "done":** Kích hoạt (Enable) và đánh dấu bắt buộc (`*`) các trường: `Repair date`, `Description`, `Cost`, `Performed by`.
-        * **Nếu Status != "done":** Vô hiệu hóa (Disable) và xóa giá trị các trường trên.
+        * **Nếu Status = "done":** 
+            * Kích hoạt (Enable) các trường: `Repair date`, `Description`, `Cost`, `Performed by`.
+
+            * Đánh dấu bắt buộc (`*`) các trường: `Repair date`.
+    
 * **OnSaveButtonClick (Modal Submit):**
     * **Trigger:** Nhấn nút "Save" trong Modal.
     * **Action:** Gọi API `PATCH /api/v1/repairRequests/{id}/status`.

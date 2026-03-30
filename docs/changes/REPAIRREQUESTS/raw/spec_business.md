@@ -32,7 +32,7 @@
             
 ### 3. Update Status Logic (Critical Event)
 * **Status Switching:** - Trong Popup Update Status, khi thay đổi dropdown `Status`.
-    - Nếu giá trị là `done`: Mở khóa (Enable) các trường: `Repair date`, `Description`, `Cost`, `Performed by`.
+    - Nếu giá trị là `done`: Mở khóa (Enable) các trường: `Repair date`, `Description`, `Cost`, `Performed by`. 
     - Nếu giá trị khác `done`: Khóa (Disable) và xóa trắng dữ liệu các trường trên.
 * **Submit Update:**
     - Thực hiện lưu trạng thái. Nếu là `done`, hệ thống đồng thời phải tạo bản ghi mới vào bảng `ASSET_MAINTENANCES`.
@@ -49,14 +49,14 @@
 * **Date Constraints:** - `Request date` ≤ Ngày hiện tại.
     - `Repair date` (khi status = done) ≥ `Request date`.
 * **Financial Data:** - `Cost` (khi status = done) phải là số dương (Positive Number).
-* **Conditional Required:** - Khi Status là `done`, các trường `Repair date`, `Cost`, `Performed by` bắt buộc phải nhập.
+* **Conditional Required:** - Khi Status là `done`, trường `Repair date` bắt buộc phải nhập.
 
 ---
 
 ## C. Business Logic & Data Model
 
 ### 1. Involved Tables
-* **REPAIR_REQUESTS:** ID, asset_id (FK), requested_by (FK), request_date, status (ENUM: pending, fixing, done, cancel), description.
+* **REPAIR_REQUESTS:** ID, asset_id (FK), requested_by (FK), request_date, status (ENUM: pending, fixing, done, cancel), description, created_by, updated_by.
 * **EMPLOYEES:** ID, employee_code, name.
 
 ---
@@ -75,4 +75,4 @@
 * `PUT /api/v1/repairRequests/{id}` (Edit)
 * `DELETE /api/v1/repairRequests` (Bulk delete, Body: `{ ids: [] }`)
 * `PATCH /api/v1/repairRequests/{id}/status` 
-    - Body: `{ status, repairDate, cost, performedBy, description }`
+    - Body: `{ status, repairDate, cost, performedBy, description, updated_by}`

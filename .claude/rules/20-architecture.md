@@ -31,9 +31,11 @@
 |------|---------|
 | New API endpoint | `server/routes/` + `server/controllers/` + `server/utils/validator.js` |
 | New DB table | `server/migrations/` (new file) + `server/models/` |
-| New Redux action type | `client/constants/actionType.js` |
+| New Redux action type — generic CRUD entity | `client/constants/actionType.js` |
+| New Redux action type — dedicated module stack | Co-locate in the action file (e.g. `repairRequestAction.js` exports its own constants); use when the module has its own reducer/service and does not reuse `crudAction` |
 | New API service call | `client/services/httpService.js` or new service file |
 | New utility function | `client/utils/` (FE) or `server/utils/` (BE) |
+| New locale / translation strings | `client/i18n/<lang>/` (vi / en / ja) |
 | Cross-cutting BE concern | `server/middlewares/` |
 
 > Detail: `docs/architecture/overview.md`, `docs/architecture/key-flows.md`

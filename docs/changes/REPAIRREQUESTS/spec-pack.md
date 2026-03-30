@@ -1,6 +1,6 @@
 # Spec Pack — REPAIRREQUESTS Module
 
-> Version: 1.2 | Date: 2026-03-28 | Status: Ready for Implementation
+> Version: 1.6 | Date: 2026-03-29 | Status: Implemented — Post-impl amendments applied (v1.5, v1.6)
 > Sources: `sources.md` (S-1, S-2, S-3, S-4, S-5, S-6, S-7)
 
 ---
@@ -22,7 +22,7 @@ Hệ thống Quản Lý Tài Sản (QLTS) cần module **Repair Requests** để
 - Update Status popup với conditional fields khi status=done
 - Auto-create `asset_maintenances` record khi status chuyển sang `done`
 - Auto-update `assets.status = 'IN_REPAIR'` khi status chuyển sang `in_progress` (BE side-effect, same transaction)
-- Autocomplete cho Asset Code, Employee (Requested by), và Employee (Performed by)
+- Autocomplete cho Asset Code và Employee (Requested by)
 - Server-side column sorting (default: `request_date DESC`)
 
 ### Out of Scope
@@ -39,8 +39,8 @@ Hệ thống Quản Lý Tài Sản (QLTS) cần module **Repair Requests** để
 |------|-----------|
 | Repair Request | Yêu cầu sửa chữa tài sản, lưu trong bảng `repair_requests` |
 | Asset | Tài sản, lưu trong bảng `assets`, tham chiếu qua `asset_id` |
-| Requested by | Nhân viên tạo yêu cầu, FK tới `employees.id` |
-| Performed by | Người thực hiện sửa chữa — **Employee autocomplete** (displays `[employee_code] - [name]`; stores employee identifier in `performed_by VARCHAR(100)`) |
+| Requested by | Nhân viên tạo yêu cầu — **Employee autocomplete** (displays `[employee_code] - [name]`; stores `employees.id` as `requested_by` FK) |
+| Performed by | Tên đơn vị/công ty thực hiện sửa chữa — **free-text input** (không phải autocomplete); lưu vào `performed_by VARCHAR(100)` |
 | Status | ENUM: `open` / `in_progress` / `done` / `cancelled` |
 | Update Status | Hành động thay đổi trạng thái của một repair request qua popup riêng |
 | Asset Maintenance | Bản ghi chi tiết sửa chữa/bảo trì trong bảng `asset_maintenances` |
@@ -53,7 +53,7 @@ Hệ thống Quản Lý Tài Sản (QLTS) cần module **Repair Requests** để
 
 ### As-Is
 - Module REPAIRREQUESTS chưa tồn tại trong codebase
-- Bảng `repair_requests` và `asset_maintenances` đã có trong DB schema
+- Bảng `repair_requests` và `asset_maintenances` được mô tả trong `qlts_database_schema.md` nhưng **chưa có migration files** → cần tạo Knex migrations
 
 ### To-Be
 
@@ -80,7 +80,7 @@ Hệ thống Quản Lý Tài Sản (QLTS) cần module **Repair Requests** để
 [Update Status Popup]
   └── ID (read-only)
   └── Status dropdown (options depend on current status)
-        ├── If done → Enable: Repair date*, Cost*, Performed by* (autocomplete), Description
+        ├── If done → Enable: Repair date* (required), Cost (optional), Performed by (optional, free-text), Description (optional)
         └── If not done → Disable + clear above fields
 ```
 
@@ -135,18 +135,16 @@ Status dropdown options: `all` / `open` / `in progress` / `cancelled` / `done`
 ### 5.2 Autocomplete Behavior
 
 - Triggers on each keystroke (minimum 1 character)
-- **Asset Code:** calls `GET /api/v1/assets/searchbyCodeOrName/{query}`, displays `[asset_code] - [name]`
-- **Requested by:** calls `GET /api/v1/employees/searchbyCodeOrName/{query}`, displays `[employee_code] - [name]`
-- **Performed by** (Update Status popup): calls `GET /api/v1/employees/searchbyCodeOrName/{query}`, displays `[employee_code] - [name]`; stores identifier string in `performed_by VARCHAR(100)` on save
-- **Only values selected from dropdown are accepted** — free-text without a backing ID is rejected
-- On selection: field displays the label; internally stores the `id` (or identifier string for Performed by) for API calls
+- **Asset Code:** calls `GET /api/assets/searchbyCodeOrName/{query}`, displays `[asset_code] - [name]`; on selection stores `asset_id`
+- **Requested by:** calls `GET /api/employees/searchbyCodeOrName/{query}`, displays `[employee_code] - [name]`; on selection stores `employee_id` as `requested_by`
+- **Only values selected from dropdown are accepted** — free-text without a backing ID is rejected on form submit
 
 ---
 
 ### 5.3 Search Execution
 
 - Triggered by: clicking "Search" button OR changing pagination page/page-size OR changing sort column/direction
-- Sends: `POST /api/v1/repairRequests/search`
+- Sends: `POST /api/repairRequests/search`
 
 ```json
 {
@@ -188,7 +186,7 @@ Status dropdown options: `all` / `open` / `in progress` / `cancelled` / `done`
 | 4 | Request date | Date picker | Yes | ≤ today |
 
 - Initial status set by system: `open`
-- API: `POST /api/v1/repairRequests`
+- API: `POST /api/repairRequests`
 
 **Save feedback:**
 - Success: show success message, close modal, refresh grid
@@ -200,12 +198,12 @@ Status dropdown options: `all` / `open` / `in progress` / `cancelled` / `done`
 
 ### 5.6 Edit
 
-**Popup initialization:** System calls `GET /api/v1/repairRequests/{id}` to load data.
+**Popup initialization:** System calls `GET /api/repairRequests/{id}` to load data.
 
 - `id` displayed as read-only **text label** (not inside an input element) at the top of the form
 - All other fields pre-filled: Asset Code, Requested by, Description, Request date
 - Same field order and constraints as Add
-- API: `PUT /api/v1/repairRequests/{id}`
+- API: `PUT /api/repairRequests/{id}`
 
 **Save feedback:**
 - Success: show success message ("Cập nhật thành công"), close modal, refresh grid
@@ -218,7 +216,7 @@ Status dropdown options: `all` / `open` / `in progress` / `cancelled` / `done`
 ### 5.7 View
 
 - All fields read-only, no submit button
-- API: `GET /api/v1/repairRequests/{id}`
+- API: `GET /api/repairRequests/{id}`
 
 ---
 
@@ -226,7 +224,7 @@ Status dropdown options: `all` / `open` / `in progress` / `cancelled` / `done`
 
 **Case A — items selected (n ≥ 1):**
 - Show confirm modal: **"Delete ({n} items). Are you sure?"** — OK / Cancel buttons
-- OK → `DELETE /api/v1/repairRequests` with body `{ "ids": [id1, id2, ...] }`
+- OK → `DELETE /api/repairRequests` with body `{ "ids": [id1, id2, ...] }`
 - Cancel → close modal, no action
 
 **Case B — no items selected:**
@@ -247,8 +245,8 @@ Status dropdown options: `all` / `open` / `in progress` / `cancelled` / `done`
 | Status | Dropdown | Always | Always |
 | Repair date | Date picker | status = `done` | status = `done` |
 | Description | Textarea | status = `done` | No |
-| Cost | Text (number) | status = `done` | status = `done` |
-| Performed by | Employee autocomplete | status = `done` | status = `done` |
+| Cost | Text (number) | status = `done` | **No** (optional; must be ≥ 0 if provided) |
+| Performed by | Text (free entry) | status = `done` | **No** (optional; max 100 chars) |
 
 **Status dropdown options (dynamic per current status):**
 
@@ -264,10 +262,10 @@ Status dropdown options: `all` / `open` / `in progress` / `cancelled` / `done`
 - On dropdown change → any other value: Disable and **clear** all 4 conditional fields
 
 **Submit logic:**
-- Calls `PATCH /api/v1/repairRequests/{id}/status`
-- Body: `{ status, repairDate, cost, performedBy, description }`
+- Calls `PATCH /api/repairRequests/{id}/status`
+- Body: `{ status, repairDate, cost, performedBy, description, updated_by }`
 - If status = `done`: server must **also** create a record in `asset_maintenances` in the **same DB transaction**:
-- **Save feedback:** Show multilingual success message (VN/EN/JP), close modal, refresh grid
+- **Save feedback:** Show multilingual success message **"Cập nhật trạng thái thành công."** (VN/EN/JP), close modal, refresh grid
 
 ```
 asset_maintenances INSERT:
@@ -303,9 +301,9 @@ asset_maintenances INSERT:
 | V-4 | Request date | Add/Edit | ≤ today | "Cannot be a future date" |
 | V-5 | Repair date | Update Status, done | Required | "Repair date is required" |
 | V-6 | Repair date | Update Status, done | ≥ Request date | "Repair date must be after Request date" |
-| V-7 | Cost | Update Status, done | Required | "Cost is required" |
-| V-8 | Cost | Update Status, done | Positive number (> 0) | "Cost must be a positive number" |
-| V-9 | Performed by | Update Status, done | Required; must be selected from autocomplete dropdown | "Performed by is required" |
+| V-7 | Cost | Update Status, done | **Optional**; if provided must be ≥ 0; 0 allowed (free repair) | "Cost cannot be negative" |
+| V-8 | Cost | Update Status, done | Non-negative number (≥ 0); 0 is allowed (free repair) | "Cost cannot be negative" |
+| V-9 | Performed by | Update Status, done | **Optional**; free-text input; max 100 chars if provided | — |
 | V-10 | Status | Update Status | Transition must follow allowed rules (see §5.9 table) | Invalid transition (prevented by dropdown options) |
 | V-11 | Any autocomplete | Add/Edit/Search | Value must be selected from list; free-text without ID is rejected | Invalid selection |
 
@@ -323,7 +321,8 @@ asset_maintenances INSERT:
 | Icons | lucide-react: Pencil (Edit), Eye (View), RotateCw (Update Status) |
 | Column sorting | Server-side sort; `sortField` and `sortDir` sent in Search API body; default: `request_date DESC` |
 | Error handling | API failure (network error, 5xx): show error feedback. Add/Edit modal: keep modal open + show server error detail. Other actions: toast notification |
-| Success feedback | Add/Edit save success: show success message + close modal + refresh grid. Update Status save: multilingual message (VN/EN/JP) + close modal + refresh grid |
+| Success feedback | Add/Edit save success: show multilingual success message (VN/EN/JP) + close modal + refresh grid. Update Status save: "Cập nhật trạng thái thành công." (VN/EN/JP) |
+| i18n | All user-visible messages (validation errors, confirmation prompts, success/error notifications, empty-state text) must support VN/EN/JP |
 | Auth | All API calls require authentication (Bearer JWT header via `isAuthenticated` middleware) |
 | Stack | React 17, Redux, Redux-Form, Material-UI v4, JavaScript (no TypeScript) |
 | DB transactions | `PATCH /status` transitions that write to multiple tables must use a single DB transaction |
@@ -334,17 +333,17 @@ asset_maintenances INSERT:
 
 ### Search & Autocomplete
 
-**AC-1:** When user types ≥1 character in the Asset Code input, system calls `GET /api/v1/assets/searchbyCodeOrName/{query}` and shows a dropdown with results in format `[asset_code] - [name]`.
+**AC-1:** When user types ≥1 character in the Asset Code input, system calls `GET /api/assets/searchbyCodeOrName/{query}` and shows a dropdown with results in format `[asset_code] - [name]`.
 
-**AC-2:** When user types ≥1 character in the Requested by input, system calls `GET /api/v1/employees/searchbyCodeOrName/{query}` and shows a dropdown with results in format `[employee_code] - [name]`.
+**AC-2:** When user types ≥1 character in the Requested by input, system calls `GET /api/employees/searchbyCodeOrName/{query}` and shows a dropdown with results in format `[employee_code] - [name]`.
 
 **AC-3:** If a user types text in an autocomplete field and does not select from the dropdown, the value is rejected (field treated as empty / invalid) on form submit.
 
-**AC-4:** Clicking Search sends `POST /api/v1/repairRequests/search` with `{ assetId, requestedBy, status, page, pageSize, sortField, sortDir }`.
+**AC-4:** Clicking Search sends `POST /api/repairRequests/search` with `{ assetId, requestedBy, status, page, pageSize, sortField, sortDir }`.
 
-**AC-5:** When the search API returns 0 items, the grid displays the message "Repair request does not exist."
+**AC-5:** When the search API returns 0 items, the grid displays the message "Repair request does not exist." (supports VN/EN/JP).
 
-**AC-6:** Clicking Clear resets all filter fields (Asset Code → empty, Requested by → empty, Status → "all") and immediately triggers a Search to reload the grid.
+**AC-6:** Clicking Clear resets all filter fields (Asset Code → empty, Requested by → empty, Status → "all"), resets sort to default (`request_date DESC`), and immediately triggers a Search to reload the grid. Autocomplete text inputs are visually cleared and their backing IDs discarded.
 
 ### Grid & Pagination
 
@@ -370,7 +369,7 @@ asset_maintenances INSERT:
 
 **AC-16:** The Add popup does NOT display an ID field. Add form field display order is: Asset Code, Requested by, Description, Request date.
 
-**AC-17:** A valid Add submission calls `POST /api/v1/repairRequests`; on success the modal closes, a success message is shown, and the grid refreshes with the new record at status `open`.
+**AC-17:** A valid Add submission calls `POST /api/repairRequests`; on success the modal closes, a multilingual success message (VN/EN/JP) is shown as a "Thông báo" dialog with OK button, and the grid refreshes sorted by `request_date DESC` with the new record at status `open`.
 
 **AC-18:** If the Add API call returns an error, the modal stays open and displays the server error message inline.
 
@@ -378,15 +377,15 @@ asset_maintenances INSERT:
 
 ### Edit
 
-**AC-20:** Clicking Edit calls `GET /api/v1/repairRequests/{id}` and opens the Edit popup with all fields pre-filled.
+**AC-20:** Clicking Edit calls `GET /api/repairRequests/{id}`; the Edit popup opens **only after** the fetch resolves with the correct record (no race condition — setModalMode is chained in `.then()`). All fields are pre-filled from the fetched record.
 
 **AC-21:** The id value in the Edit popup is displayed as a read-only text label (not inside an input element).
 
 **AC-22:** Edit form applies the same validation rules as Add (AC-12 to AC-15).
 
-**AC-23:** A valid Edit submission calls `PUT /api/v1/repairRequests/{id}`; on success the modal closes, shows "Cập nhật thành công", and the grid refreshes.
+**AC-23:** A valid Edit submission calls `PUT /api/repairRequests/{id}`; on success the modal closes, shows a multilingual success message (VN/EN/JP) as a "Thông báo" dialog, and the grid refreshes.
 
-**AC-24:** If the Edit API call returns an error, the modal stays open and displays the server error message inline.
+**AC-24:** ~~If the Edit API call returns an error, the modal stays open and displays the server error message inline.~~ **AMENDED (v1.6):** If the Edit API call returns an error, the modal stays open and a toast notification displays the server error message (consistent with AC-40 "other actions: toast").
 
 **AC-25:** Clicking Close or X on the Edit popup discards all changes and closes the modal immediately.
 
@@ -398,7 +397,7 @@ asset_maintenances INSERT:
 
 **AC-28:** Clicking Cancel on the delete confirm modal closes it without calling any API.
 
-**AC-29:** Clicking OK on the delete confirm modal calls `DELETE /api/v1/repairRequests` with `{ "ids": [...] }` and refreshes the grid.
+**AC-29:** Clicking OK on the delete confirm modal calls `DELETE /api/repairRequests` with `{ "ids": [...] }` and refreshes the grid.
 
 ### Update Status
 
@@ -406,27 +405,33 @@ asset_maintenances INSERT:
 
 **AC-31:** When the Status dropdown in the popup changes to `done`, the fields Repair date, Description, Cost, and Performed by become enabled and are cleared.
 
-**AC-32:** When the Status dropdown changes from `done` to any other value, the fields Repair date, Description, Cost, and Performed by are disabled and their values are cleared.
+**AC-32:** When the Status dropdown value is anything other than `done` — including the initial form load — the fields Repair date, Description, Cost, and Performed by are disabled and their values are cleared.
 
 **AC-33:** Submitting Update Status as `done` without Repair date shows "Repair date is required".
 
-**AC-34:** Submitting Update Status as `done` without Cost shows "Cost is required".
+**AC-34:** ~~Submitting Update Status as `done` without Cost shows "Cost is required".~~ **AMENDED (v1.5):** Cost is **optional** when status = `done`. If provided, Cost must be ≥ 0 (V-7/V-8). Submitting without Cost is accepted; the `asset_maintenances` record is created with `cost = NULL`.
 
-**AC-35:** Submitting Update Status as `done` without Performed by shows "Performed by is required". Performed by must be selected from the employee autocomplete dropdown (`GET /api/v1/employees/searchbyCodeOrName/{query}`); free-text entry is not accepted.
+**AC-35:** ~~Submitting Update Status as `done` without Performed by shows "Performed by is required".~~ **AMENDED (v1.5):** Performed by is **optional** when status = `done` (max 100 chars). Submitting without Performed by is accepted; `performed_by = NULL` is stored.
 
 **AC-36:** Submitting Update Status as `done` with Repair date < Request date of the record shows "Repair date must be after Request date".
 
-**AC-37:** Submitting Update Status as `done` with Cost ≤ 0 shows "Cost must be a positive number."
+**AC-37:** Submitting Update Status as `done` with Cost < 0 shows "Cost cannot be negative." Cost = 0 is valid (free repair case).
 
-**AC-38:** A successful Update Status `done` submission calls `PATCH /api/v1/repairRequests/{id}/status` AND the server creates a new record in `asset_maintenances` (type='repair') in the same DB transaction.
+**AC-38:** A successful Update Status `done` submission calls `PATCH /api/repairRequests/{id}/status` AND the server creates a new record in `asset_maintenances` (type='repair') in the same DB transaction.
 
-**AC-39:** A successful Update Status submission (any status) shows a multilingual success message (VN/EN/JP), closes the modal, and refreshes the grid row to reflect the new status and row color.
+**AC-39:** A successful Update Status submission (any status) shows a multilingual success message (VN/EN/JP) as a "Thông báo" dialog with OK button, closes the modal, and refreshes the grid row to reflect the new status and row color.
 
-**AC-40:** If any API call fails (network error or 5xx response): for Add/Edit modals the modal stays open and displays the server error detail inline; for all other actions a toast error notification is shown.
+**AC-40:** ~~for Add/Edit modals the modal stays open and displays the server error detail inline; for all other actions a toast error notification is shown.~~ **AMENDED (v1.6):** If any API call fails (network error or server error): **Add modal only** — modal stays open and displays the server error inline. For **all other actions** (Edit, UpdateStatus, Delete, Search, fetch-by-id) — a toast error notification is shown. Network errors (no response) are handled safely — no unhandled JS exception.
 
 **AC-41:** On initial page load and after Clear, the grid is sorted by `request_date DESC` (newest first).
 
 **AC-42:** When Update Status changes status to `in_progress`, the BE updates `assets.status = 'IN_REPAIR'` in the same DB transaction as the `repair_requests.status` update.
+
+### i18n / Language Switcher
+
+**AC-43:** The application header contains a language-switcher dropdown showing the active language's flag and full name (e.g. 🇻🇳 Tiếng Việt). Opening the dropdown shows three options: 🇻🇳 Tiếng Việt, 🇬🇧 English, 🇯🇵 日本語. Selecting a language immediately re-renders all visible labels, column headers, button text, validation messages, status labels, dialog titles, and success/error messages in the RepairRequests module to the selected language.
+
+**AC-44:** The Add popup's Request date field defaults to today's date on open; the user may change it to any date ≤ today.
 
 ---
 
@@ -436,7 +441,7 @@ asset_maintenances INSERT:
 
 **N-1: Search with status filter**
 - User selects status = "in progress" and clicks Search
-- System sends `POST /api/v1/repairRequests/search` with `{ status: "in_progress", page: 1, pageSize: 10, sortField: "request_date", sortDir: "desc" }`
+- System sends `POST /api/repairRequests/search` with `{ status: "in_progress", page: 1, pageSize: 10, sortField: "request_date", sortDir: "desc" }`
 - Grid shows rows where status = `in_progress`
 - Pagination shows total count
 
@@ -444,16 +449,19 @@ asset_maintenances INSERT:
 - User types "LAP" in Asset Code → selects "LAP2024BC10050 - Laptop" from dropdown
 - User types "Bui" in Requested by → selects "EMP001 - Bui Minh Tien" from dropdown
 - User sets Request date = 2026-03-28 (today)
-- User clicks Submit → `POST /api/v1/repairRequests` called
+- User clicks Submit → `POST /api/repairRequests` called
 - New row appears in grid with status "open"
 
 **N-3: Complete a repair (status → done)**
 - User clicks RotateCw on a row with status = `in_progress`
-- Popup opens; ID field shows record ID (read-only); Status dropdown shows only "done" as option
-- User changes Status to "done" → Repair date, Cost, Performed by, Description become enabled
-- User fills: Repair date = 2026-03-28, Cost = 500000
-- User types "Sang" in Performed by → selects "EMP005 - Sang Thanh Binh" from dropdown
-- User submits → `PATCH .../status` called → status updated + `asset_maintenances` record created in same transaction
+- Popup opens; ID field shows record ID (read-only); Status dropdown shows only "done" as option; Repair date / Cost / Performed by / Description are disabled (init state)
+- User changes Status to "done" → Repair date, Cost, Performed by, Description become enabled and cleared
+- User fills: Repair date = 2026-03-29, Cost = 500000, Performed by = "Công ty TNHH Kỹ Thuật ABC"
+- User submits → `PATCH .../status` called → status updated + `asset_maintenances` record created in same transaction → success message "Cập nhật trạng thái thành công." shown
+
+**N-4: Free repair (Cost = 0)**
+- User sets status = "done", Repair date = 2026-03-29, Performed by = "Bảo hành NSX", Cost = 0
+- On submit: validation passes (0 is allowed) → API called successfully
 
 ---
 
@@ -464,9 +472,9 @@ asset_maintenances INSERT:
 - Modal shows: "Please select the items to delete." with OK only
 - Grid unchanged
 
-**A-2: Submit Update Status as done with Cost = 0**
-- User sets status = "done", enters Cost = 0
-- On submit: validation error "Cost must be a positive number."
+**A-2: Submit Update Status as done with Cost < 0**
+- User sets status = "done", enters Cost = -1
+- On submit: validation error "Cost cannot be negative."
 - API is NOT called
 
 **A-3: Free-text in autocomplete without selection**
@@ -493,9 +501,10 @@ asset_maintenances INSERT:
 - Request date = 2026-03-29 (tomorrow) → ❌ "Cannot be a future date"
 
 **B-2: Cost boundary**
-- Cost = 0.01 → ✅ positive number, accepted
-- Cost = 0 → ❌ "Cost must be a positive number"
-- Cost = -1 → ❌ "Cost must be a positive number"
+- Cost = 0.01 → ✅ accepted
+- Cost = 0 → ✅ accepted (free repair case)
+- Cost = -0.01 → ❌ "Cost cannot be negative"
+- Cost = -1 → ❌ "Cost cannot be negative"
 
 **B-3: Repair date vs Request date**
 - Request date = 2026-03-20; Repair date = 2026-03-20 → ✅ equal is valid (≥)
@@ -506,23 +515,27 @@ asset_maintenances INSERT:
 - Total = 11, pageSize = 10 → page 2 exists; page 2 shows 1 record
 
 **B-5: Select all on page with done/cancelled rows**
-- Header checkbox selects ALL rows on page (including done/cancelled)
-- Done/cancelled rows are selectable for bulk delete
-- After delete: done/cancelled rows are removed from DB if included in selected IDs
+- `done` rows: checkbox is **disabled** — cannot be selected; header checkbox and Select All skip done rows
+- `cancelled` rows: checkbox is **enabled** — can be selected for bulk delete
+- Header checkbox selects all non-done rows on current page
+- Attempting to delete records with status `done` via API → 400 "Cannot delete records with status 'done'"
+- BE `update()` also rejects edits to `done` records → 400 "Cannot edit a record with status 'done'"
 
 ---
 
 ## 10. Resolved Issues
 
-All open issues have been resolved prior to v1.1. No pending items.
+All open issues have been resolved. No pending items.
 
-> ⚠️ **C-008 open** — Description required vs optional when status=done. See `sources.md` §C-008. Interim: Description is optional.
+> ✅ **C-008 resolved (2026-03-29)** — Description is **optional** when status=done. S-1 and S-7 updated to align with S-5. See `sources.md` §C-008.
+>
+> ✅ **C-009 (v1.5, 2026-03-29)** — Cost and Performed by are **optional** (not required) when status=done. Only Repair date remains required. Confirmed during post-implementation testing. AC-34, AC-35, V-7, V-9 updated accordingly.
 
 | ID | Resolution Summary |
 |----|--------------------|
 | OI-1 | `open → in_progress` ✓; `open → cancelled` ✓; `in_progress → done` ✓; `in_progress → cancelled` ✗ NOT allowed |
 | OI-2 | `done`: Edit + UpdateStatus disabled, View enabled. `cancelled`: UpdateStatus disabled only, Edit + View enabled |
-| OI-3 | Performed by = Employee autocomplete (same API as Requested by); stores string in VARCHAR(100) |
+| OI-3 | Performed by = free-text input (tên đơn vị sửa chữa), NOT autocomplete; stores string in `performed_by VARCHAR(100)` |
 | OI-4 | `in_progress` transition → BE updates `assets.status = 'IN_REPAIR'` in same transaction |
 | OI-5 | Description IS shown in Add form (optional field, 3rd position) |
 | OI-6 | JavaScript — existing stack (React 17, Redux, Redux-Form, MUI v4). TypeScript note in spec_ui.md ignored |
@@ -581,12 +594,14 @@ All open issues have been resolved prior to v1.1. No pending items.
 | AC-31 | Status=done enables + clears conditional fields | Update Status popup | — (FE state) | — | No | — | UT |
 | AC-32 | Status≠done disables + clears conditional fields | Update Status popup | — (FE state) | — | No | — | UT |
 | AC-33 | done: Repair date required | Update Status popup | — (FE+BE validation) | — | No | — | UT, IT, BB |
-| AC-34 | done: Cost required | Update Status popup | — (FE+BE validation) | — | No | — | UT, IT, BB |
-| AC-35 | done: Performed by required + autocomplete | Update Status popup | `GET /employees/searchbyCodeOrName/{q}` | `employees` | No | Auth | UT, IT, BB |
+| AC-34 | done: Cost **optional**; if provided must be ≥ 0 | Update Status popup | — (FE+BE validation) | — | No | — | UT, IT, BB |
+| AC-35 | done: Performed by **optional**; max 100 chars if provided | Update Status popup | — (FE+BE validation) | — | No | — | UT, IT, BB |
 | AC-36 | done: Repair date ≥ Request date | Update Status popup | — (FE+BE validation) | — | No | — | UT, IT, BB |
-| AC-37 | done: Cost > 0 | Update Status popup | — (FE+BE validation) | — | No | — | UT, IT, BB |
+| AC-37 | done: Cost ≥ 0 (negative rejected) | Update Status popup | — (FE+BE validation) | — | No | — | UT, IT, BB |
 | AC-38 | done: creates asset_maintenances in transaction | Update Status popup | `PATCH /repairRequests/{id}/status` | `repair_requests`, `asset_maintenances` | No | Auth | IT |
 | AC-39 | Update Status: success → multilingual message + close + refresh | Update Status popup | `PATCH /repairRequests/{id}/status` | `repair_requests` | No | Auth | IT, BB |
 | AC-40 | Error feedback: Add/Edit modal stays + inline; others toast | Any | Any | — | No | — | UT, IT, BB |
 | AC-41 | Default sort = request_date DESC | Grid | `POST /repairRequests/search` | `repair_requests` | No | Auth | IT, BB |
 | AC-42 | in_progress transition updates assets.status=IN_REPAIR | Update Status popup | `PATCH /repairRequests/{id}/status` | `repair_requests`, `assets` | No | Auth | IT |
+| AC-43 | Language switcher dropdown in header (flag + name, VI/EN/JP) changes all visible text | Header | — (i18n, FE only) | — | No | — | BB |
+| AC-44 | Add popup Request date defaults to today | Add popup | — (FE initialValues) | — | No | — | BB |
